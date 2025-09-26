@@ -27,6 +27,16 @@
                                     {{ ucfirst($reservation->status) }}
                                 </span>
                             </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Nama</label>
+                                <p class="mt-1 text-sm text-gray-900">{{ $reservation->name }}</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Jenis Kelamin</label>
+                                <p class="mt-1 text-sm text-gray-900">{{ ucfirst($reservation->gender) }}</p>
+                            </div>
                             
                             <div>
                                 <label class="block text-sm font-medium text-gray-500">Kategori</label>
@@ -51,6 +61,16 @@
                             <div>
                                 <label class="block text-sm font-medium text-gray-500">Jumlah</label>
                                 <p class="mt-1 text-sm text-gray-900">{{ $reservation->quantity }}</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Preferensi Kamar</label>
+                                <p class="mt-1 text-sm text-gray-900">{{ ucfirst($reservation->room_preference) }}</p>
+                            </div>
+
+                            <div>
+                                <label class="block text-sm font-medium text-gray-500">Tempat Tidur</label>
+                                <p class="mt-1 text-sm text-gray-900">{{ ucfirst($reservation->bed_config) }}</p>
                             </div>
                             
                             <div>

@@ -11,7 +11,12 @@ class ReservationController extends Controller
 {
     public function index()
     {
-        $reservations = Auth::user()->reservations()->with('category')->latest()->get();
+        $reservations = Auth::user()
+            ->reservations()
+            ->with('category')
+            ->latest()
+            ->get();
+
         return view('reservations.index', compact('reservations'));
     }
 
@@ -23,23 +28,33 @@ class ReservationController extends Controller
 
     public function store(Request $request)
     {
+        // ✅ Validasi input
         $request->validate([
-            'category_id' => 'required|exists:categories,id',
-            'item_name' => 'required|string|max:255',
-            'reservation_date' => 'required|date|after_or_equal:today',
-            'reservation_time' => 'required',
-            'quantity' => 'required|integer|min:1',
-            'notes' => 'nullable|string',
+            'category_id'       => 'required|exists:categories,id',
+            'name'              => 'required|string|max:255',
+            'gender'            => 'required|in:Laki-laki,Perempuan',
+            'item_name'         => 'required|string|max:255',
+            'reservation_date'  => 'required|date|after_or_equal:today',
+            'reservation_time'  => 'required',
+            'quantity'          => 'required|integer|min:1',
+            'room_preference'   => 'required|string',
+            'bed_config'        => 'required|string',
+            'notes'             => 'nullable|string',
         ]);
 
+        // ✅ Simpan ke database
         Reservation::create([
-            'user_id' => Auth::id(),
-            'category_id' => $request->category_id,
-            'item_name' => $request->item_name,
-            'reservation_date' => $request->reservation_date,
-            'reservation_time' => $request->reservation_time,
-            'quantity' => $request->quantity,
-            'notes' => $request->notes,
+            'user_id'           => Auth::id(),
+            'category_id'       => $request->category_id,
+            'name'              => $request->name,
+            'gender'            => $request->gender,
+            'item_name'         => $request->item_name,
+            'reservation_date'  => $request->reservation_date,
+            'reservation_time'  => $request->reservation_time,
+            'quantity'          => $request->quantity,
+            'room_preference'   => $request->room_preference,
+            'bed_config'        => $request->bed_config,
+            'notes'             => $request->notes,
         ]);
 
         return redirect()->route('reservations.index')

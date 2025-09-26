@@ -10,15 +10,19 @@ class Reservation extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'category_id',
-        'item_name',
-        'reservation_date',
-        'reservation_time',
-        'quantity',
-        'notes',
-        'status',
-    ];
+    'user_id',
+    'category_id',
+    'name',
+    'gender',
+    'item_name',
+    'reservation_date',
+    'reservation_time',
+    'quantity',
+    'room_preference',
+    'bed_config',
+    'notes',
+    'status',
+];
 
     protected function casts(): array
     {
