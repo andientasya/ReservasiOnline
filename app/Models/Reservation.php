@@ -10,25 +10,27 @@ class Reservation extends Model
     use HasFactory;
 
     protected $fillable = [
-    'user_id',
-    'category_id',
-    'name',
-    'gender',
-    'item_name',
-    'reservation_date',
-    'reservation_time',
-    'quantity',
-    'room_preference',
-    'bed_config',
-    'notes',
-    'status',
-];
+        'user_id',
+        'category_id',
+        'name',
+        'gender',
+        'item_name',
+        'reservation_date',
+        'reservation_time',
+        'quantity',
+        'room_preference',
+        'bed_config',
+        'notes',
+        'status',
+        'rating', // DITAMBAHKAN
+    ];
 
     protected function casts(): array
     {
         return [
             'reservation_date' => 'date',
             'reservation_time' => 'datetime:H:i',
+            'rating' => 'decimal:1', // DITAMBAHKAN untuk casting rating
         ];
     }
 

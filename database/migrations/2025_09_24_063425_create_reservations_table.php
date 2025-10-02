@@ -6,21 +6,26 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    public function up(): void
-    {
-        Schema::create('reservations', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('user_id')->constrained()->onDelete('cascade');
-            $table->foreignId('category_id')->constrained()->onDelete('cascade');
-            $table->string('item_name'); // kursi, kamar, meja, dll
-            $table->date('reservation_date');
-            $table->time('reservation_time');
-            $table->integer('quantity')->default(1);
-            $table->text('notes')->nullable();
-            $table->enum('status', ['pending', 'confirmed', 'cancelled'])->default('pending');
-            $table->timestamps();
-        });
-    }
+    public function up()
+{
+    Schema::create('reservations', function (Blueprint $table) {
+        $table->id();
+        $table->foreignId('user_id')->constrained()->onDelete('cascade'); // PENTING
+        $table->string('name');
+        $table->string('gender');
+        $table->foreignId('category_id')->constrained();
+        $table->string('item_name');
+        $table->integer('quantity');
+        $table->date('reservation_date');
+        $table->time('reservation_time');
+        $table->string('room_preference')->nullable();
+        $table->string('bed_config')->nullable();
+        $table->text('notes')->nullable();
+        $table->string('status')->default('pending'); // PENTING
+        $table->decimal('rating', 3, 1)->nullable(); // PENTING untuk rating
+        $table->timestamps();
+    });
+}
 
     public function down(): void
     {

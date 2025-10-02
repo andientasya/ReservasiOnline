@@ -1,7 +1,7 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            Buat Reservasi Baru
+            Edit Reservasi
         </h2>
     </x-slot>
 
@@ -126,7 +126,7 @@
             cursor: pointer;
         }
 
-        .radio-label input[type="radio"]:checked + .radio-text {
+        .radio-label input[type="radio"]:checked ~ .radio-text {
             font-weight: 600;
             color: #667eea;
         }
@@ -216,13 +216,14 @@
             <div class="form-card">
                 <!-- Form Header -->
                 <div class="form-header">
-                    <div class="form-header-icon">📝</div>
-                    <h1 class="form-header-title">Buat Reservasi Baru</h1>
-                    <p class="form-header-subtitle">Lengkapi formulir di bawah ini untuk membuat reservasi</p>
+                    <div class="form-header-icon">✏</div>
+                    <h1 class="form-header-title">Edit Reservasi</h1>
+                    <p class="form-header-subtitle">Perbarui informasi reservasi Anda</p>
                 </div>
 
-                <form method="POST" action="{{ route('reservations.store') }}">
+                <form action="{{ route('reservations.update', $reservation->id) }}" method="POST">
                     @csrf
+                    @method('PUT')
 
                     <!-- Informasi Pribadi -->
                     <div class="form-section">
@@ -230,7 +231,8 @@
 
                         <div class="form-group">
                             <label for="name" class="form-label">Nama Lengkap</label>
-                            <input type="text" id="name" name="name" value="{{ old('name') }}"
+                            <input type="text" id="name" name="name" 
+                                   value="{{ old('name', $reservation->name) }}"
                                    class="form-input"
                                    placeholder="Masukkan nama lengkap"
                                    required>
@@ -241,18 +243,15 @@
 
                         <div class="form-group">
                             <label class="form-label">Jenis Kelamin</label>
-                            <div class="radio-group">
-                                <label class="radio-label">
-                                    <input type="radio" name="gender" value="Laki-laki" 
-                                           {{ old('gender') == 'Laki-laki' ? 'checked' : '' }} required>
-                                    <span class="radio-text">👨 Laki-laki</span>
-                                </label>
-                                <label class="radio-label">
-                                    <input type="radio" name="gender" value="Perempuan" 
-                                           {{ old('gender') == 'Perempuan' ? 'checked' : '' }} required>
-                                    <span class="radio-text">👩 Perempuan</span>
-                                </label>
-                            </div>
+                            <select name="gender" class="form-select" required>
+                                <option value="">-- Pilih Jenis Kelamin --</option>
+                                <option value="Laki-laki" {{ old('gender', $reservation->gender) == 'Laki-laki' ? 'selected' : '' }}>
+                                    👨 Laki-laki
+                                </option>
+                                <option value="Perempuan" {{ old('gender', $reservation->gender) == 'Perempuan' ? 'selected' : '' }}>
+                                    👩 Perempuan
+                                </option>
+                            </select>
                             @error('gender')
                                 <p class="error-message">⚠ {{ $message }}</p>
                             @enderror
@@ -266,9 +265,9 @@
                         <div class="form-group">
                             <label for="category_id" class="form-label">Kategori</label>
                             <select id="category_id" name="category_id" class="form-select" required>
-                                <option value="">Pilih Kategori</option>
+                                <option value="">-- Pilih Kategori --</option>
                                 @foreach($categories as $category)
-                                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>
+                                    <option value="{{ $category->id }}" {{ old('category_id', $reservation->category_id) == $category->id ? 'selected' : '' }}>
                                         {{ $category->name }}
                                     </option>
                                 @endforeach
@@ -280,9 +279,10 @@
 
                         <div class="form-group">
                             <label for="item_name" class="form-label">Nama Item</label>
-                            <input type="text" id="item_name" name="item_name" value="{{ old('item_name') }}" 
+                            <input type="text" id="item_name" name="item_name" 
+                                   value="{{ old('item_name', $reservation->item_name) }}" 
                                    class="form-input"
-                                   placeholder="Contoh: Kamar 101, Meja 5, Kursi A1"
+                                   placeholder="Contoh: Kamar 101, Meja 5"
                                    required>
                             @error('item_name')
                                 <p class="error-message">⚠ {{ $message }}</p>
@@ -291,7 +291,8 @@
 
                         <div class="form-group">
                             <label for="quantity" class="form-label">Jumlah</label>
-                            <input type="number" id="quantity" name="quantity" value="{{ old('quantity', 1) }}" 
+                            <input type="number" id="quantity" name="quantity" 
+                                   value="{{ old('quantity', $reservation->quantity) }}" 
                                    min="1"
                                    class="form-input"
                                    required>
@@ -308,8 +309,7 @@
                         <div class="form-group">
                             <label for="reservation_date" class="form-label">Tanggal Reservasi</label>
                             <input type="date" id="reservation_date" name="reservation_date" 
-                                   value="{{ old('reservation_date') }}" 
-                                   min="{{ date('Y-m-d') }}"
+                                   value="{{ old('reservation_date', $reservation->reservation_date) }}"
                                    class="form-input"
                                    required>
                             @error('reservation_date')
@@ -320,7 +320,7 @@
                         <div class="form-group">
                             <label for="reservation_time" class="form-label">Waktu Reservasi</label>
                             <input type="time" id="reservation_time" name="reservation_time" 
-                                   value="{{ old('reservation_time') }}" 
+                                   value="{{ old('reservation_time', $reservation->reservation_time) }}"
                                    class="form-input"
                                    required>
                             @error('reservation_time')
@@ -338,12 +338,12 @@
                             <div class="radio-group">
                                 <label class="radio-label">
                                     <input type="radio" name="room_preference" value="bebas_asap" 
-                                           {{ old('room_preference') == 'bebas_asap' ? 'checked' : '' }}>
+                                           {{ old('room_preference', $reservation->room_preference) == 'bebas_asap' ? 'checked' : '' }}>
                                     <span class="radio-text">🚭 Bebas Asap</span>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="room_preference" value="merokok" 
-                                           {{ old('room_preference') == 'merokok' ? 'checked' : '' }}>
+                                           {{ old('room_preference', $reservation->room_preference) == 'merokok' ? 'checked' : '' }}>
                                     <span class="radio-text">🚬 Boleh Merokok</span>
                                 </label>
                             </div>
@@ -357,12 +357,12 @@
                             <div class="radio-group">
                                 <label class="radio-label">
                                     <input type="radio" name="bed_config" value="besar" 
-                                           {{ old('bed_config') == 'besar' ? 'checked' : '' }}>
+                                           {{ old('bed_config', $reservation->bed_config) == 'besar' ? 'checked' : '' }}>
                                     <span class="radio-text">🛏 Tempat Tidur Besar</span>
                                 </label>
                                 <label class="radio-label">
                                     <input type="radio" name="bed_config" value="twin" 
-                                           {{ old('bed_config') == 'twin' ? 'checked' : '' }}>
+                                           {{ old('bed_config', $reservation->bed_config) == 'twin' ? 'checked' : '' }}>
                                     <span class="radio-text">🛌 Twin Bed</span>
                                 </label>
                             </div>
@@ -375,7 +375,7 @@
                             <label for="notes" class="form-label">Catatan Tambahan</label>
                             <textarea id="notes" name="notes" rows="4" 
                                       class="form-textarea"
-                                      placeholder="Tambahkan catatan atau permintaan khusus...">{{ old('notes') }}</textarea>
+                                      placeholder="Tambahkan catatan atau permintaan khusus...">{{ old('notes', $reservation->notes) }}</textarea>
                             @error('notes')
                                 <p class="error-message">⚠ {{ $message }}</p>
                             @enderror
@@ -385,10 +385,10 @@
                     <!-- Form Actions -->
                     <div class="form-actions">
                         <a href="{{ route('reservations.index') }}" class="btn btn-secondary">
-                            ← Kembali
+                            ← Batal
                         </a>
                         <button type="submit" class="btn btn-primary">
-                            ✓ Buat Reservasi
+                            ✓ Update Reservasi
                         </button>
                     </div>
                 </form>
